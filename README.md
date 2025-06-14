@@ -6,7 +6,7 @@
 ## ✨ Overview
 > **anox-itservice** is a IT repair job system where players fix computers, diagnose hardware issues, and navigate through legitimate and scam jobs.
 
-- [Preview]()
+- [Preview](https://www.youtube.com/watch?v=7gNDLLo-JCY)
 - [Docs](https://anoxstudios.gitbook.io/anoxstudios/free-scripts/side-hustles/anox-itservice)
 - [Discord](https://discord.gg/gbJ5SyBJBv)
 
