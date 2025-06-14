@@ -9,7 +9,6 @@
 - [Preview]()
 - [Docs](https://anoxstudios.gitbook.io/anoxstudios/free-scripts/side-hustles/anox-itservice)
 - [Discord](https://discord.gg/gbJ5SyBJBv)
-- [Download](https://github.com/ANoXShadow/anox-itservice)
 
 ---
 
