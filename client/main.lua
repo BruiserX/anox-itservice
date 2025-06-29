@@ -66,23 +66,6 @@ CreateThread(function()
     end
 end)
 
-CreateThread(function()
-    while true do
-        local job = activeJob
-        if timerActive and job and timeLeft > 0 then
-            local timeFormatted = string.format('%02d:%02d', math.floor(timeLeft / 60), timeLeft % 60)
-            Framework.ShowTextUI(_L('time_left', timeFormatted), {
-                style = 'timer',
-                icon = 'clock',
-                iconAnimation = 'pulse'
-            })
-        else
-            Framework.HideTextUI()
-        end
-        Wait(0)
-    end
-end)
-
 function openJobMenu()
     if menuOpen then
         Framework.Notify(nil, _L('error'), _L('menu_in_use'), 'error')
@@ -168,6 +151,35 @@ function startJob(job)
     Framework.Notify(nil, _L('job_accepted'), _L('job_taken'), 'success')
     timeLeft = job.playerTimeLimit
     timerActive = true
+
+    -- Start job timer + TextUI thread (runs only when job is active)
+    CreateThread(function()
+        local lastTime = -1
+        while timerActive and activeJob and timeLeft > 0 do
+            if timeLeft ~= lastTime then
+                lastTime = timeLeft
+                local timeFormatted = string.format('%02d:%02d', math.floor(timeLeft / 60), timeLeft % 60)
+                Framework.ShowTextUI(_L('time_left', timeFormatted), {
+                    style = 'timer',
+                    icon = 'clock',
+                    iconAnimation = 'pulse'
+                })
+            end
+            Wait(1000)
+            timeLeft -= 1
+        end
+
+        -- Hide TextUI after timer ends or job is canceled
+        Framework.HideTextUI()
+
+        if timeLeft <= 0 and activeJob then
+            Framework.Notify(nil, _L('job_failed'), _L('job_failed'), 'error')
+            lib.callback('anox-itservice:jobFailed', false, function() end, activeJob.id)
+            cleanupJob()
+        end
+    end)
+
+    -- Blip and target logic (unchanged)
     if job.type == 'prank' then
         createJobBlip(job.location, _L('customer_location'))
         createDoorTarget(job.location, job)
@@ -185,6 +197,7 @@ function startJob(job)
             createDoorTarget(job.location.door, job)
         end
     end
+
     Framework.Debug('Started job: ' .. job.id .. ' (' .. job.jobName .. ') Type: ' .. job.type, 'info')
 end
 
